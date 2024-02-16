@@ -1,0 +1,153 @@
+using System;
+using System.ComponentModel.Design;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
+using static MainClass;
+
+public class MainClass
+{
+    public static void Main(string[] args)
+    {
+
+        Console.WriteLine("Введите название школы ниже:");
+        string schoolName = Console.ReadLine(); // название школы
+
+        School school = new School(schoolName); // создаем школу с этим именем
+
+
+        Console.WriteLine($"Школа {schoolName} успешно создана");
+
+        while (true)
+        {
+            Console.WriteLine($"Хотите посмотреть список всех учеников школы {schoolName}?");
+
+            if (CheckForAnswer(Console.ReadLine()))
+            {
+                PrintStudents(school); // вывод списка учеников
+
+                if (school.Students.Count != 0)
+                {
+                    Console.WriteLine($"Желаете удалить ученика?");
+                    DeleteStudent(school); // удаление ученика
+                }
+
+                Console.WriteLine($"Хотите добавить нового ученика?");
+                AddNewStudent(school); // добавление нового ученика
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        Console.WriteLine($"Спасибо, что заинтересовались нашей школой, будем ждать Вас снова :)");
+    }
+
+    private static void PrintStudents(School school)
+    {
+        if (school.Students.Count == 0)
+        {
+            Console.WriteLine($"В школе {school.Name} пока нет учеников");
+        }
+        else
+        {
+            Console.WriteLine($"  {"ИМЯ",-10} {"ФАМИЛИЯ",-10} {"ВОЗРАСТ",-10}");
+
+            for (var i = 0; i < school.Students.Count; i++)
+            {
+                var t = school.Students[i];
+                Console.WriteLine($"{i+1} {t.FirstName,-10} {t.LastName,-10} {t.Age,-10}");
+            }
+        }
+    }
+
+    private static void AddNewStudent(School school)
+    {
+        if (CheckForAnswer(Console.ReadLine()))
+        {
+            Console.Write("Введите имя ученика: ");
+            string firstName = Console.ReadLine(); // вводим имя
+            Console.Write("Введите фамилию ученика: ");
+            string lastName = Console.ReadLine(); // вводим фамилию
+            Console.Write("Введите возраст ученика: ");
+            string ageStudent = Console.ReadLine(); // вводим возраст
+
+            // создание нового ученика
+            Student student = new Student(firstName, lastName, CheckNumber(ageStudent, 100), school.Students.Count + 1); // создаем ученика с указанными данными
+
+            school.Students.Add(student); // добавляем нового ученика в список
+
+            Console.WriteLine($"Ученик {firstName} успешно добавлен в школу {school.Name}");
+        }
+    }
+
+    public static void DeleteStudent(School school)
+    {
+        if (CheckForAnswer(Console.ReadLine()) == true)
+        {
+            Console.Write("Введите номер ученика, которого хотите удалить: ");
+            int index = int.Parse(Console.ReadLine()) - 1; // вводим индекс
+
+            school.Students.RemoveAt(CheckNumber(index.ToString(), school.Students.Count - 1)); // удаляем ученика из списка
+
+            Console.WriteLine($"Ученик успешно удалён из школы {school.Name}");
+        }
+    }
+
+    public static int CheckNumber(string number, int stopLimit)
+    {
+        int parsedNumber;
+
+        while (true)
+        {
+            if (!int.TryParse(number, out parsedNumber))
+            {
+                Console.Write("Введите только число: ");
+                number = Console.ReadLine();
+            }
+            else if (parsedNumber > stopLimit || parsedNumber < 0)
+            {
+                Console.Write($"Введите число от 0 до {stopLimit}: ");
+                number = Console.ReadLine();
+            }
+            else
+            {
+                break;
+            }
+        }
+        return parsedNumber;
+    }
+
+    public static bool CheckForAnswer(string answer)
+    {
+        return answer.ToLower() == "да";
+    }
+}
+
+    public class School
+    {
+        public string Name;
+        public List<Student> Students;
+
+        public School(string name)
+        {
+            Name = name;
+            Students = new List<Student>();
+        }
+    }
+
+    public class Student
+    {
+        public int Index;
+        public string FirstName;
+        public string LastName;
+        public int Age;
+
+        public Student(string firstName, string lastName, int age, int index)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Age = age;
+            Index = index;
+        }
+    }
