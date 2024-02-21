@@ -44,11 +44,8 @@ public class Fraction
         Numerator = numerator;
         Denomenator = denomenator;
     }
-    public Fraction(int number)
-    {
-        Numerator = number;
-        Denomenator = 1;
-    }
+
+    public Fraction(int number) : this(number, 1) { } 
 
     public void Print()
     {
