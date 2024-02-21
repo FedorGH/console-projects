@@ -1,0 +1,110 @@
+using System;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
+using static MainClass;
+
+public class MainClass
+{
+    public static void Main(string[] args)
+    {
+        Fraction fraction1 = new Fraction(1, 2);
+        fraction1.Print();
+        Fraction fraction2 = new Fraction(193, 50);
+        fraction2.Print();
+
+        // Operations allOper = new Operations(fraction1, fraction2); // как вариант - сделать отдельный класс с разными операциями
+        // allOper.Division().Print();
+
+        Console.WriteLine("---------------------------");
+
+        fraction1.Plus(fraction2).Print();
+        fraction1.Minus(fraction2).Print();
+        fraction1.Multiply(fraction2).Print();
+        fraction1.Division(fraction2).Print();
+
+        Console.WriteLine("---------------------------");
+
+        fraction1.Plus(1).Print();
+        fraction1.Minus(1).Print();
+        fraction1.Multiply(2).Print();
+        fraction1.Division(2).Print();
+    }
+
+}
+
+public class Fraction
+{
+    public int Numerator;
+    public int Denomenator;
+
+    public Fraction(int numerator, int denomenator)
+    {
+        Numerator = numerator;
+        Denomenator = denomenator;
+    }
+    public Fraction(int number)
+    {
+        Numerator = number;
+        Denomenator = 1;
+    }
+
+    public void Print()
+    {
+        if (Numerator % Denomenator == 0)
+        {
+            Console.WriteLine(Numerator/Denomenator);
+        }
+        else
+        {
+            for (int i = Math.Abs(Numerator); i >= 2; i--)
+            {
+                if (Denomenator % i == 0 && Numerator % i == 0)
+                {
+                    Numerator /= i;
+                    Denomenator /= i;
+                }
+            }
+            Console.WriteLine($"{Numerator}/{Denomenator}");
+        }
+    }
+
+    public Fraction Plus(Fraction frac)
+    {
+        return new Fraction(frac.Numerator * Denomenator + Numerator * frac.Denomenator, frac.Denomenator * Denomenator);
+    }
+    public Fraction Minus(Fraction frac)
+    {
+        return new Fraction(Numerator * frac.Denomenator - frac.Numerator * Denomenator, frac.Denomenator * Denomenator);
+    }
+    public Fraction Multiply(Fraction frac)
+    {
+        return new Fraction(frac.Numerator * Numerator, frac.Denomenator * Denomenator);
+    }
+    public Fraction Division(Fraction frac)
+    {
+        return new Fraction(frac.Denomenator * Numerator, Denomenator * frac.Numerator);
+    }
+    
+    public Fraction Plus(int number)
+    {
+        Fraction otherFraction = new Fraction(number, 1);
+        return Plus(otherFraction);
+    }
+    public Fraction Minus(int number)
+    {
+        Fraction otherFraction = new Fraction(number, 1);
+        return Minus(otherFraction);
+    }
+    public Fraction Multiply(int number)
+    {
+        Fraction otherFraction = new Fraction(number, 1);
+        return Multiply(otherFraction);
+    }
+    public Fraction Division(int number)
+    {
+        Fraction otherFraction = new Fraction(number, 1);
+        return Division(otherFraction);
+    }
+}
